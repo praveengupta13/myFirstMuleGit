@@ -1,0 +1,6 @@
+http:
+ host: "api.openweathermap.org"
+ resource: "/data/2.5/weather"
+ basepath: "/"
+ key: "94a91ca29fe0e60a272f105e81f96777"
+ port: "8081"
