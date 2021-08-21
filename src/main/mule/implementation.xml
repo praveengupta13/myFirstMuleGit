@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	
+	<flow name="getWeather" doc:id="8a78f69e-4c2e-4bf4-b6f5-faa6b0a5f42b" >
+		<set-variable value="#[payload.city1 as String]" doc:name="setCity1" doc:id="d3bdc6bd-8e22-4b6a-b6dc-a076291f6248" variableName="city1"/>
+		<set-variable value="#[attributes.queryParams.city2 as String]" doc:name="setCity2" doc:id="21ede4d4-1f09-40ba-b2f6-4f129faa1d02" variableName="city2"/>
+		<logger level="INFO" doc:name="Logger" doc:id="02a2aecd-86ef-4d13-ac57-d88b3cf508e1" message='#[output application/json ---&#10;"City1 -&gt; " ++ vars.city1 as String ++ "city2 --&gt;" ++ vars.city2 as String]'/>
+		<flow-ref doc:name="Flow Reference" doc:id="5669469b-d5e8-4cfb-b06c-8761b191c7a6" name="weatheCalls"/>
+	</flow>
+	<flow name="weatheCalls" doc:id="9ea2d288-0582-48ec-a659-849c346362b0" >
+		<logger level="INFO" doc:name="Logger" doc:id="9b6c2f99-214d-484e-9358-61d4716d0320" message='#[output application/json ---&#10;"City1 -&gt; " ++ vars.city1 as String ++ "city2 --&gt;" ++ vars.city2]'/>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="fc96f156-bccc-4c51-bbf9-5865fa073c47" >
+			<route >
+				<try doc:name="Try" doc:id="1ac8a6ba-31ce-417c-bb61-d626d9e62afa" >
+					<http:request method="GET" doc:name="city1Weather" doc:id="9154edfe-e29e-4e9a-b246-2d1254990c5c" config-ref="HTTP_Request_configuration" path="${http.resource}">
+						<http:query-params ><![CDATA[#[output application/java
+---
+{
+	q : vars.city1,
+	appid : p('http.key')
+}]]]></http:query-params>
+					</http:request>
+				</try>
+			</route>
+			<route >
+				<try doc:name="Try" doc:id="0ea1e31f-92b8-4cf8-8bfa-4afd67b81e41" >
+					<http:request method="GET" doc:name="city2Weather" doc:id="355d6423-c334-4acd-a188-f04434d008a3" config-ref="HTTP_Request_configuration" path="${http.resource}" >
+						<http:query-params ><![CDATA[#[output application/java
+---
+{
+	q : vars.city2,
+	appid : p('http.key')
+}]]]></http:query-params>
+					</http:request>
+				</try>
+			</route>
+		</scatter-gather>
+		<ee:transform doc:name="Transform Message" doc:id="4226dd3b-ba09-4dd5-8b57-d12f5c7bc2ba" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload..payload map ((in, it) -> 
+{
+    city_Name: in.name,
+    feels_like: in.main.feels_like - 273,
+    temp_min: in.main.temp_min - 273,
+    temp_max: in.main.temp_max - 273,
+    pressure: in.main.pressure
+
+}
+)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
