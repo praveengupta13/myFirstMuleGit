@@ -7,9 +7,8 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	
 	<flow name="getWeather" doc:id="8a78f69e-4c2e-4bf4-b6f5-faa6b0a5f42b" >
-		<set-variable value="#[payload.city1 as String]" doc:name="setCity1" doc:id="d3bdc6bd-8e22-4b6a-b6dc-a076291f6248" variableName="city1"/>
-		<set-variable value="#[attributes.queryParams.city2 as String]" doc:name="setCity2" doc:id="21ede4d4-1f09-40ba-b2f6-4f129faa1d02" variableName="city2"/>
-		<logger level="INFO" doc:name="Logger" doc:id="dbfdf97d-6d9e-4571-9dfa-bbf550e7fefc" message="hi"/>
+		<set-variable value="#[payload.city1 as String]" doc:name="setVarCity1" doc:id="d3bdc6bd-8e22-4b6a-b6dc-a076291f6248" variableName="city1"/>
+		<set-variable value="#[attributes.queryParams.city2 as String]" doc:name="setVarCity2" doc:id="21ede4d4-1f09-40ba-b2f6-4f129faa1d02" variableName="city2"/>
 		<logger level="INFO" doc:name="Logger" doc:id="02a2aecd-86ef-4d13-ac57-d88b3cf508e1" message='#[output application/json ---&#10;"City1 -&gt; " ++ vars.city1 as String ++ "city2 --&gt;" ++ vars.city2 as String]'/>
 		<flow-ref doc:name="Flow Reference" doc:id="5669469b-d5e8-4cfb-b06c-8761b191c7a6" name="weatheCalls"/>
 	</flow>
