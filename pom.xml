@@ -31,6 +31,15 @@
 				<extensions>true</extensions>
 				<configuration>
 					<classifier>mule-application</classifier>
+					<cloudHubDeployment>
+			      <muleVersion>4.3.0</muleVersion>
+			      <username>naishagupta160715</username>
+			      <password>Mulesoft@2021</password>
+			      <applicationName>getweather-service</applicationName>
+			      <environment>Sandbox</environment>   
+			      <workers>1</workers>
+			      <workerType>MICRO</workerType>
+</cloudHubDeployment>
 				</configuration>
 			</plugin>
 		</plugins>
